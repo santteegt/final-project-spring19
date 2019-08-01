@@ -2,7 +2,7 @@
 
 ## Final Project: Nifties Exchange - A Blockchain game for promoting tourism and crypto onboarding
 
-* **Author**: Santiago Gonzalez Toral ([Github](https://github.com/santteegt)|[email](mailto:hernangt12re3@gmail.com))
+- **Author**: Santiago Gonzalez Toral ([Github](https://github.com/santteegt)|[email](mailto:hernangt12re3@gmail.com))
 
 ### What is this project about?
 
@@ -10,37 +10,39 @@ Nifties Exchange is a dApp for incentivize the tourism on distant and not well-k
 
 #### User stories
 
+**Video Demo**: Part[ 1](https://youtu.be/WNILgIfUbe8)|[ 2](https://youtu.be/lM-U4I5F7gg)
+
 ![User Stories](resources/banner.png)
 
 Come and join the adventure to know new unknown places within big Cities around the globe. You will be able to claim digital stamps when visiting this places and benefit both from unique rewards on discounted attractions and by selling it later on an exchange-based game so you can earn some tokens and other people can also benefit from its availability.
 
-* As a director of the local tourism department, you may want to incentivize people to meet some places that aren't well-known but offer attractive activities for the local/foreign visitors. So you can deploy a StampCollectible smart contract, put some funds in the `Prize pot`, and mint some stamps with a limited supply. Tourists can claim one of them via a QR code located in-place, and later use it to buy discounted goods/services on awesome attractions. A Limited supply of stamps allows you to program short-to-medium scale campaigns and incentivize people to sell them later through the built-in exchange game for a small reward based on market price which is taken from the `Prize pot`. In that way, other people can also benefit from these stamps in the future.
+- As a director of the local tourism department, you may want to incentivize people to meet some places that aren't well-known but offer attractive activities for the local/foreign visitors. So you can deploy a StampCollectible smart contract, put some funds in the `Prize pot`, and mint some stamps with a limited supply. Tourists can claim one of them via a QR code located in-place, and later use it to buy discounted goods/services on awesome attractions. A Limited supply of stamps allows you to program short-to-medium scale campaigns and incentivize people to sell them later through the built-in exchange game for a small reward based on market price which is taken from the `Prize pot`. In that way, other people can also benefit from these stamps in the future.
 
-* As a tourist, you may want to have a more fun experience during travelling that allows you to know awesome places. Through Nifties exchange, you can find a digital guide that recommends you to visit interesting places and get rewarded for it. You just need to collect or buy digital stamps through the dApp, playing with them using and exchange-based game, use them to get discounts on local attractions and get some profit at the end by selling them at the current market value.
+- As a tourist, you may want to have a more fun experience during travelling that allows you to know awesome places. Through Nifties exchange, you can find a digital guide that recommends you to visit interesting places and get rewarded for it. You just need to collect or buy digital stamps through the dApp, playing with them using and exchange-based game, use them to get discounts on local attractions and get some profit at the end by selling them at the current market value.
 
-* As a blockchain community member, you may want to find more suitable ways to onboard crypto and decentralized applications to the masses. according to the latest [UNWTO World Tourism Barometer](http://marketintelligence.unwto.org/content/unwto-world-tourism-barometer), more than 1.4 billion of international tourist arrivals around the world have happened in 2018. Why not try to onboard that many people to blockchain? Nifties exchange allows you to do it within your locality.
+- As a blockchain community member, you may want to find more suitable ways to onboard crypto and decentralized applications to the masses. according to the latest [UNWTO World Tourism Barometer](http://marketintelligence.unwto.org/content/unwto-world-tourism-barometer), more than 1.4 billion of international tourist arrivals around the world have happened in 2018. Why not try to onboard that many people to blockchain? Nifties exchange allows you to do it within your locality.
 
 ### How to Setup the project locally?
 
 #### Software Requirements
 
-* Node v10.5.0+ ([How-to install](https://github.com/nvm-sh/nvm#installation-and-update))
-* truffle v5.x.x
-* MythX
-* Solc 0.5.0+
-* Local testnet (e.g. Ganache, ganache-cli, truffle develop, Geth, Parity, etc.) with a RPC running at http://localhost:8545
-* Any Web3 enabled browser (e.g. with Metamask plugin installed) browser
-* OpenZeppelin SDK (**optional** to test smart contract upgradability)
+- Node v10.5.0+ ([How-to install](https://github.com/nvm-sh/nvm#installation-and-update))
+- truffle v5.x.x
+- MythX
+- Solc 0.5.0+
+- Local testnet (e.g. Ganache, ganache-cli, truffle develop, Geth, Parity, etc.) with a RPC running at http://localhost:8545
+- Any Web3 enabled browser (e.g. with Metamask plugin installed) browser
+- OpenZeppelin SDK (**optional** to test smart contract upgradability)
 
 ### Installation instructions
 
-* Most of the installation requirements can be installed by executing the following command:
+- Most of the installation requirements can be installed by executing the following command:
 
 ```bash
 $ npm install -g truffle truffle-security ganache-cli
 ```
 
-* Additionally, you can also install OpenZeppelin SDK if you want to deploy upgradable contracts:
+- Additionally, you can also install OpenZeppelin SDK if you want to deploy upgradable contracts:
 
 ```bash
 npm install -g @openzeppelin/cli
