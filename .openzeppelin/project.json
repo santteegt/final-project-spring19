@@ -1,0 +1,17 @@
+{
+  "manifestVersion": "2.2",
+  "contracts": {
+    "StampCollectible": "StampCollectible"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts-ethereum-package": "^2.2.0"
+  },
+  "name": "final-project-spring19",
+  "version": "1.0.0",
+  "compiler": {
+    "manager": "truffle",
+    "compilerSettings": {
+      "optimizer": {}
+    }
+  }
+}
