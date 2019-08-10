@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import getWeb3, { getGanacheWeb3 } from './utils/getWeb3';
+import getWeb3,
+    { getGanacheWeb3, PORTIS_APP_ID, walletConnect, getPortis } from './utils/getWeb3';
+import Web3Connect from "web3connect";
 import Web3Info from './components/Web3Info/index.js';
 import Header from './components/Header/index.js';
 import Stamps from './components/Stamps/index.js';
-import { Loader, Card, Flex, Box, Blockie } from 'rimble-ui';
+import { Loader, Card, Flex, Box, Blockie, Button } from 'rimble-ui';
 
 import styles from './App.module.scss';
 
@@ -30,51 +32,135 @@ class App extends Component {
     return [];
   };
 
-  componentDidMount = async () => {
-      let StampCollectible = {}
-      try {
-        // StampCollectible = require('../../build/contracts/StampCollectible.json');
-        StampCollectible = require('./contracts/StampCollectible.json');
-      } catch (e) {
-        console.log(e);
-      }
-    try {
-      const isProd = process.env.NODE_ENV === 'production';
-      // Get network provider and web3 instance.
-      const web3 = await getWeb3();
-      // Use web3 to get the user's accounts.
-      const accounts = await web3.eth.getAccounts();
-      // Get the contract instance.
-      const networkId = await web3.eth.net.getId();
-      const isMetaMask = web3.currentProvider.isMetaMask;
-      let balance = accounts.length > 0 ? await web3.eth.getBalance(accounts[0]) : web3.utils.toWei('0');
-      balance = web3.utils.fromWei(balance, 'ether');
-      if (!isProd) {
-        // web3.eth.subscribe('newBlockHeaders').on('data', (blockHeader) => console.log("NEW BLOCK!!"));
-        // const ganacheAccounts = await this.getGanacheAddresses();
-        // this.setState({ganacheAccounts});
-      }
-      let contract = null;
-      let availableNetworks = [];
-      if (StampCollectible.networks) {
-        availableNetworks = Object.keys(StampCollectible.networks);
-        console.log('StampCollectible Networks', availableNetworks);
+  updateWalletConnect = async (provider) => {
+     // new Promise((resolve, reject) => {
+        // try {
+        console.log('updateWalletConnect')
+        const web3 = await walletConnect(provider);
+        this.setState({ web3 }, this.updateConfig);
+            // resolve(web3);
+        // } catch(error) {
+            // reject(error);
+        // }
+ }
 
-        let deployedNetwork = StampCollectible.networks[networkId.toString()];
-        if (deployedNetwork) {
-          contract = new web3.eth.Contract(StampCollectible.abi, deployedNetwork && deployedNetwork.address);
-          // this.subscribeLogEvent(web3, instance, "NewStamp");
+ loginPortis = async () => {
+
+     const portis = await getPortis('rinkeby');
+     const web3 = await walletConnect(portis.provider);
+     console.log('PORTIS', portis, web3)
+     await portis.provider.enable()
+     // console.log('PORTIS widget', await portis.widget())
+     this.setState({ portis, web3 });
+ }
+
+  // componentDidMount = async () => {
+  //     let StampCollectible = {}
+  //     try {
+  //       // StampCollectible = require('../../build/contracts/StampCollectible.json');
+  //       StampCollectible = require('./contracts/StampCollectible.json');
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   try {
+  //     const isProd = process.env.NODE_ENV === 'production';
+  //     // Get network provider and web3 instance.
+  //     const web3 = await getWeb3();
+  //     // Use web3 to get the user's accounts.
+  //     const accounts = await web3.eth.getAccounts();
+  //     // Get the contract instance.
+  //     const networkId = await web3.eth.net.getId();
+  //     const isMetaMask = web3.currentProvider.isMetaMask;
+  //     let balance = accounts.length > 0 ? await web3.eth.getBalance(accounts[0]) : web3.utils.toWei('0');
+  //     balance = web3.utils.fromWei(balance, 'ether');
+  //     if (!isProd) {
+  //       // web3.eth.subscribe('newBlockHeaders').on('data', (blockHeader) => console.log("NEW BLOCK!!"));
+  //       // const ganacheAccounts = await this.getGanacheAddresses();
+  //       // this.setState({ganacheAccounts});
+  //     }
+  //     let contract = null;
+  //     let availableNetworks = [];
+  //     if (StampCollectible.networks) {
+  //       availableNetworks = Object.keys(StampCollectible.networks);
+  //       console.log('StampCollectible Networks', availableNetworks);
+  //
+  //       let deployedNetwork = StampCollectible.networks[networkId.toString()];
+  //       if (deployedNetwork) {
+  //         contract = new web3.eth.Contract(StampCollectible.abi, deployedNetwork && deployedNetwork.address);
+  //         // this.subscribeLogEvent(web3, instance, "NewStamp");
+  //       }
+  //     }
+  //     if(contract) {
+  //         this.setState({ contract, availableNetworks });
+  //     }
+  //     this.setState({ web3, accounts, balance, networkId, isMetaMask});
+  //   } catch (error) {
+  //     // Catch any errors for any of the above operations.
+  //     alert(`Failed to load web3, accounts, or contract. Check console for details.`);
+  //     console.error(error);
+  //   }
+  // };
+
+  updateConfig = async () => {
+      console.log('updateConfig')
+
+    let StampCollectible = {}
+    const { web3 } = this.state;
+    console.log('DOES WEB3 exists?', web3);
+    if (web3) {
+        try {
+          StampCollectible = require('./contracts/StampCollectible.json');
+
+          const isProd = process.env.NODE_ENV === 'production';
+          // Use web3 to get the user's accounts.
+          const accounts = await web3.eth.getAccounts();
+          console.log('ACCOUNTS', accounts);
+          // Get the contract instance.
+          const networkId = await web3.eth.net.getId();
+          const isMetaMask = web3.currentProvider.isMetaMask;
+          let balance = accounts.length > 0 ? await web3.eth.getBalance(accounts[0]) : web3.utils.toWei('0');
+          balance = web3.utils.fromWei(balance, 'ether');
+          if (!isProd) {
+            // web3.eth.subscribe('newBlockHeaders').on('data', (blockHeader) => console.log("NEW BLOCK!!"));
+            // const ganacheAccounts = await this.getGanacheAddresses();
+            // this.setState({ganacheAccounts});
+          }
+          if (isMetaMask) {
+              window.ethereum.on('accountsChanged', (accounts) => {
+                  console.log('METAMASK account has changed!', accounts)
+                  this.updateConfig();
+              })
+              window.ethereum.on('networkChanged', (networkId) => {
+                  console.log('METAMASK network has changed!', networkId)
+                  this.updateConfig();
+              })
+          }
+          let contract = null;
+          let availableNetworks = [];
+          if (StampCollectible.networks) {
+            availableNetworks = Object.keys(StampCollectible.networks);
+            console.log('StampCollectible Networks', availableNetworks);
+
+            let deployedNetwork = StampCollectible.networks[networkId.toString()];
+            if (deployedNetwork) {
+              contract = new web3.eth.Contract(StampCollectible.abi, deployedNetwork && deployedNetwork.address);
+              // this.subscribeLogEvent(web3, instance, "NewStamp");
+            } else {
+                console.log('ERROR!, WRONG NETWORK');
+
+            }
+          }
+          if(contract) {
+              this.setState({ contract, availableNetworks });
+          }
+          this.setState({ accounts, balance, networkId, isMetaMask});
+        } catch (error) {
+          // Catch any errors for any of the above operations.
+          alert(`Failed to load web3, accounts, or contract. Check console for details.`);
+          console.error(error);
         }
-      }
-      if(contract) {
-          this.setState({ contract, availableNetworks });
-      }
-      this.setState({ web3, accounts, balance, networkId, isMetaMask});
-    } catch (error) {
-      // Catch any errors for any of the above operations.
-      alert(`Failed to load web3, accounts, or contract. Check console for details.`);
-      console.error(error);
     }
+
   };
 
   componentWillUnmount() {
@@ -137,15 +223,38 @@ class App extends Component {
     );
   }
 
+  renderConnectButton() {
+      return (
+          <Web3Connect.Button
+              providerOptions={{
+                portis: {
+                  id: PORTIS_APP_ID, // required
+                  network: "rinkeby" // optional
+                }
+              }}
+              onConnect={(provider: any) => {
+                  console.log('WalletConnect provider', provider)
+                  this.updateWalletConnect(provider);
+              }}
+              onClose={() => {
+                console.log("Web3Connect Modal Closed"); // modal has closed
+              }}
+            />);
+     // return (
+     //    <Button onClick={() => this.loginPortis()}>Connect to Portis</Button>
+     // );
+  }
+
   render() {
-    if (!this.state.web3) {
-      return this.renderLoader();
-    }
-    const { accounts } = this.state;
-    let address = accounts[0]
+    // if (!this.state.web3) {
+    //   return this.renderLoader();
+    // }
+    const { web3, accounts } = this.state;
+    let address = accounts && accounts[0]
+    const walletConnectButton = this.renderConnectButton();
     return (
       <div className={styles.App}>
-          <Card bg="blue" color="white" borderRadius={2} my={3} mx={2} px={3} py={3} style={{'textAlign': 'center'}}>
+          {address && (<Card bg="blue" color="white" borderRadius={2} my={3} mx={2} px={3} py={3} style={{'textAlign': 'center'}}>
             <Flex style={{'position': 'absolute', 'textAlign': 'center'}}>
               Nifties Exchange
               <br />
@@ -169,9 +278,12 @@ class App extends Component {
                   </a>
                 </Box>
             </Flex>
-          </Card>
-        <Web3Info {...this.state} />
-        <Stamps getStamps={this.getStamps} buyStamp={this.buyStamp} sellStamp={this.sellStamp} {...this.state} />
+          </Card>)}
+          {!web3 && walletConnectButton}
+          {web3 && accounts && (
+              <Web3Info {...this.state}  />)}
+          {web3 && accounts && (
+              <Stamps getStamps={this.getStamps} buyStamp={this.buyStamp} sellStamp={this.sellStamp} {...this.state} />)}
       </div>
     );
   }

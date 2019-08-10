@@ -1,5 +1,29 @@
+import Portis from '@portis/web3';
 import Web3 from 'web3';
+
 const FALLBACK_WEB3_PROVIDER = process.env.REACT_APP_NETWORK || 'http://0.0.0.0:8545';
+const PORTIS_APP_ID = process.env.PORTIS_APP_ID || '53689f2e-5ed0-4fb2-a54d-397358c49fc0';
+
+const walletConnect = (provider) =>
+    new Promise((resolve, reject) => {
+        try {
+            const web3 = new Web3(provider);
+            resolve(web3);
+        } catch(error) {
+            reject(error);
+        }
+    });
+
+const getPortis = (network) =>
+    new Promise((resolve, reject) => {
+        try {
+            const portis = new Portis(PORTIS_APP_ID, network);
+            resolve(portis);
+        } catch(error) {
+            reject(error);
+        }
+    });
+
 
 const getWeb3 = () =>
   new Promise((resolve, reject) => {
@@ -46,4 +70,4 @@ const getGanacheWeb3 = () => {
 };
 
 export default getWeb3;
-export { getGanacheWeb3 };
+export { getGanacheWeb3, PORTIS_APP_ID, walletConnect, getPortis };
