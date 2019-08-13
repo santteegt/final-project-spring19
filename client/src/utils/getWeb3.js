@@ -4,26 +4,64 @@ import Web3 from 'web3';
 const FALLBACK_WEB3_PROVIDER = process.env.REACT_APP_NETWORK || 'http://0.0.0.0:8545';
 const PORTIS_APP_ID = process.env.PORTIS_APP_ID || '53689f2e-5ed0-4fb2-a54d-397358c49fc0';
 
-const walletConnect = (provider) =>
-    new Promise((resolve, reject) => {
-        try {
-            const web3 = new Web3(provider);
-            resolve(web3);
-        } catch(error) {
-            reject(error);
-        }
-    });
+const walletConnectProviderOpts = {
+  portis: {
+    id: PORTIS_APP_ID,
+    network: 'rinkeby',
+    config: {
+      gasRelay: true,
+    },
+  },
+  disableWalletConnect: true,
+};
 
-const getPortis = (network) =>
-    new Promise((resolve, reject) => {
-        try {
-            const portis = new Portis(PORTIS_APP_ID, network);
-            resolve(portis);
-        } catch(error) {
-            reject(error);
-        }
-    });
+const web3Networks = {
+  '1': {
+    name: 'mainnet',
+    explorerTx: 'https://etherscan.io/tx',
+    explorerAddress: 'https://etherscan.io/address/',
+  },
+  '3': {
+    name: 'ropsten',
+    explorerTx: 'https://ropsten.etherscan.io/tx/',
+    explorerAddress: 'https://ropsten.etherscan.io/address/',
+  },
+  '4': {
+    name: 'rinkeby',
+    explorerTx: 'https://rinkeby.etherscan.io/tx/',
+    explorerAddress: 'https://rinkeby.etherscan.io/address/',
+  },
+  '5': {
+    name: 'goerli',
+    explorerTx: 'https://blockscout.com/eth/goerli/tx/',
+    explorerAddress: 'https://blockscout.com/eth/goerli/address/',
+  },
+  '42': {
+    name: 'kovan',
+    explorerTx: 'https://blockscout.com/eth/kovan/tx/',
+    explorerAddress: 'https://blockscout.com/eth/kovan/address/',
+  },
+};
 
+const walletConnect = provider =>
+  new Promise((resolve, reject) => {
+    try {
+      const web3 = new Web3(provider);
+      resolve(web3);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+const getPortis = network =>
+  new Promise((resolve, reject) => {
+    try {
+      const portis = new Portis(PORTIS_APP_ID, network);
+      resolve(portis);
+    } catch (error) {
+      reject(error);
+    }
+  });
 
 const getWeb3 = () =>
   new Promise((resolve, reject) => {
@@ -70,4 +108,4 @@ const getGanacheWeb3 = () => {
 };
 
 export default getWeb3;
-export { getGanacheWeb3, PORTIS_APP_ID, walletConnect, getPortis };
+export { walletConnectProviderOpts, web3Networks, getGanacheWeb3, walletConnect, getPortis };
