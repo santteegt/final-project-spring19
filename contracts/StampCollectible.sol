@@ -347,7 +347,35 @@ contract StampCollectible is Initializable, RelayRecipient, Pausable, ERC721Meta
     function postRelayedCall(bytes calldata _context, bool _success, uint _actualCharge, bytes32 _preRetVal) /*relayHubOnly*/ external {
     }
 
+    /**
+     * @dev set RelayHub address
+     * @param _rhub RelayHub address
+     */
     function updateRelayHub(IRelayHub _rhub) public onlyMinter {
         setRelayHub(_rhub);
+    }
+
+    /**
+     * Deposit balance to the RelayHub
+     */
+    function depositToRelay() public onlyMinter payable {
+        getRelayHub().depositFor.value(msg.value)(address(this));
+    }
+
+    /**
+     * Withdraw balance deposited on the RelayHub
+     */
+    function withdrawFromRelay() public onlyMinter {
+        uint256 balance = getRelayHub().balanceOf(address(this));
+        getRelayHub().withdraw(balance);
+        msg.sender.transfer(balance);
+    }
+
+    /**
+     * Get balance deposited on the RelayHub
+     * @return uint current balance
+     */
+    function getBalanceOnRelay() public view onlyMinter returns (uint) {
+        return getRelayHub().balanceOf(address(this));
     }
 }
