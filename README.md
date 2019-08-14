@@ -57,6 +57,12 @@ $ npm install
 $ cd client && npm install
 ```
 
+Install web3connect
+
+```bash
+git clone https://github.com/santteegt/web3connect/tree/portis-gasrelay --branch portis-gasrelay
+```
+
 If developing/running the dApp in your local computer, you need to deploy a local ganache in a separate terminal by running the following command:
 
 ```bash

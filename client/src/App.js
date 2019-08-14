@@ -40,8 +40,8 @@ class App extends Component {
 
   loginWalletConnect = async provider => {
     const web3 = await walletConnect(provider);
-    console.log('provider', provider, provider._portis.showPortis);
     if (provider.isPortis) {
+      console.log('provider', provider, provider._portis.showPortis);
       this.setState({ portis: provider._portis, web3 }, this.updateConfig);
     } else {
       this.setState({ web3 }, this.updateConfig);
