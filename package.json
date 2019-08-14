@@ -33,6 +33,7 @@
     "@openzeppelin/contracts-ethereum-package": "^2.2.1",
     "dotenv": "^6.2.0",
     "openzeppelin-eth": "^2.1.3",
+    "tabookey-gasless": "^0.4.0-beta2",
     "truffle-hdwallet-provider": "^1.0.3"
   },
   "devDependencies": {

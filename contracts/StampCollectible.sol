@@ -8,12 +8,17 @@ import "@openzeppelin/contracts-ethereum-package/contracts/lifecycle/Pausable.so
 import "@openzeppelin/upgrades/contracts/Initializable.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/drafts/Counters.sol";
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
+import "tabookey-gasless/contracts/GsnUtils.sol";
+import "tabookey-gasless/contracts/IRelayHub.sol";
+import "tabookey-gasless/contracts/RelayRecipient.sol";
+
 
 /// @title A Nifties exchange game to incentivize tourism and onboard to crypto
 /// @author santteegt
 /// @notice NFTs Market price is artificially calculated based on randomness feed from previous block hashes and user demand
 /// @dev Contract can be upgraded through a proxy contract supplied by OpenZeppelin SDK
-contract StampCollectible is Initializable, Pausable, ERC721MetadataMintable {
+/// @dev Contract can be used with the GSN
+contract StampCollectible is Initializable, RelayRecipient, Pausable, ERC721MetadataMintable {
     /// Library used to perform unit increment/decrements
     using Counters for Counters.Counter;
     /// Library to avoid overflow/underflow bugs
@@ -197,26 +202,27 @@ contract StampCollectible is Initializable, Pausable, ERC721MetadataMintable {
     function sellStamp(uint256 _tokenId) public
         whenNotPaused
         returns (bool) {
-            require(balances[msg.sender][_tokenId].owned, "User does not own this stamp");
+            address sender = getSender();
+            require(balances[sender][_tokenId].owned, "User does not own this stamp");
             Stamp storage stamp = stamps[_tokenId];
             uint256 payout = stamp.price;
             require(address(this).balance >= payout, "Prize pot is almost empty so it is no longer possible to sell stamps");
             stamp.inWild = stamp.inWild.sub(1);
             stamp.price = uint256(getNFTPrice(_tokenId)).mul(costMultiplier);
 
-            ClonedStamp storage clonedStamp = balances[msg.sender][_tokenId];
+            ClonedStamp storage clonedStamp = balances[sender][_tokenId];
             clonedStamp.owned = false;
 
             // burn token
             _burn(clonedStamp.tokenId);
             ownedTokensIndex[clonedStamp.tokenId] = false;
 
-            emit BurnedStamp(msg.sender, _tokenId, clonedStamp.tokenId);
+            emit BurnedStamp(sender, _tokenId, clonedStamp.tokenId);
             delete stamps[clonedStamp.tokenId];
             // TODO: disabled when upgrading the contract
             // msg.sender.transfer(payout); // This approach can block the asset if owned by a bad actor (contract account)
             // TODO: to be addded in an upgraded version of the contract
-            outstandingBalance[msg.sender] = outstandingBalance[msg.sender].add(payout);
+            outstandingBalance[sender] = outstandingBalance[sender].add(payout);
             return true;
     }
 
@@ -241,11 +247,107 @@ contract StampCollectible is Initializable, Pausable, ERC721MetadataMintable {
       */
     /// TODO: to be addded in an upgraded version of the contract
     function withdraw() public whenNotPaused returns (bool) {
-    	require(outstandingBalance[msg.sender] > 0, "You dont have any outstanding balance to withdraw");
-    	uint amount = outstandingBalance[msg.sender];
-    	outstandingBalance[msg.sender] = 0;
-        emit WithdrawnBalance(msg.sender, amount);
+        address sender = getSender();
+    	require(outstandingBalance[sender] > 0, "You dont have any outstanding balance to withdraw");
+    	uint amount = outstandingBalance[sender];
+    	outstandingBalance[sender] = 0;
+        hasWithdrawn[sender] = true;
+        emit WithdrawnBalance(sender, amount);
         msg.sender.transfer(amount);
     	return true;
+    }
+
+    /// Logs if a user already withdraw some balance from the pot
+    mapping (address => bool) public hasWithdrawn;
+
+    /// Verifies that a call is done by the relayer
+    modifier onlyByRelayer() {
+        require(msg.sender == getHubAddr(), "Transaction can only be perfomed by the relayer");
+        _;
+    }
+
+    /// Triggered when a stamp is airdroped through the relayer
+    event AirdropedStamp(address indexed sender, uint tokenId);
+
+    /**
+     * @dev Airdrop a stamp throguh a relayer in the GSN
+     * param _tokenId Gen0 NFT index in storage
+     * @return uint tokenId corresponding to the cloned NFT
+     */
+    function airdropStamp(uint256 _tokenId) public
+        whenNotPaused
+        onlyByRelayer
+        returns (uint) {
+            address sender = getSender();
+            Stamp storage stamp = stamps[_tokenId];
+            require(stamp.clonedFrom == 0, "You can only generate new stamps from Gen0 NFTs");
+            require(!balances[sender][_tokenId].owned, "You already own this stamp");
+            require(stamp.inWild.add(1) <= stamp.maxClones, "Sorry! This Stamp is not currently available");
+            stamp.inWild = stamp.inWild.add(1);
+
+            /// mint and increase total minted
+            totalMinted.increment();
+            uint tokenId = totalMinted.current();
+            Stamp memory clonedStamp = Stamp({
+                price: stamp.price,
+                maxClones: 0,
+                inWild: 0,
+                clonedFrom: _tokenId
+            });
+            stamps[tokenId] = clonedStamp;
+            ownedTokensIndex[tokenId] = true;
+            _mint(sender, tokenId);
+            balances[sender][_tokenId].owned = true;
+            balances[sender][_tokenId].tokenId = tokenId;
+
+            emit AirdropedStamp(sender, tokenId);
+            emit NewStamp(sender, tokenId, stamp.price);
+            return tokenId;
+    }
+
+    /** @dev It's an error code designed to help the DApp identify the reason. Low negatives are reserved for known issues but you can add your own errors in your contract
+      * @param _relay RelayHub address
+      * @param _from Tx sender
+      * @param  _encodedFunction encoded Function being called
+      * @param _transactionFee tx fee
+      * @param _gasPrice tx gas price
+      * @param _gasLimit tx gas limit
+      * @param _nonce tx nonce
+      * @param _approvalData tx data
+      * @param _maxPossibleCharge max possible charge per tx
+      * @return uint256 0 means you accept sponsoring the relayed transaction. Anything else indicates rejection.
+      * @return bytes Error message
+      */
+    function acceptRelayedCall(address _relay, address _from, bytes calldata _encodedFunction,
+            uint256 _transactionFee, uint256 _gasPrice, uint256 _gasLimit, uint256 _nonce,
+            bytes calldata _approvalData, uint256 _maxPossibleCharge)
+            external view returns (uint256, bytes memory) {
+
+                if(hasWithdrawn[_from]) {
+                    return (10, "User has already withdrawn some balance");
+                }
+                return (0, "");
+    }
+
+    /** @dev Inform of the maximum cost the call may have, and can be used to charge the user in advance.
+      * @notice This is useful if the user may spend their allowance as part of the call, so you can lock some funds here.
+      * @param _context tx data
+      * @return bytes32 the maximum cost the call may have
+      */
+    function preRelayedCall(bytes calldata _context) /*relayHubOnly*/ external returns (bytes32) {
+        return bytes32(uint(123456));
+    }
+
+    /** @dev The success flag indicates whether it was relayed successfully or not. This is where you would usually subtract from the user's remaining credit
+      * @param _context tx data
+      * @param _success True if tx was relayed
+      * @param _actualCharge charged value
+      * @param _preRetVal preRetVal
+      */
+    function postRelayedCall(bytes calldata _context, bool _success, uint _actualCharge, bytes32 _preRetVal) /*relayHubOnly*/ external {
+    }
+
+    function updateRelayHub(IRelayHub _rhub) public onlyMinter {
+        setRelayHub(_rhub);
     }
 }

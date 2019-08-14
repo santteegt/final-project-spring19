@@ -9,9 +9,10 @@
   "name": "final-project-spring19",
   "version": "1.0.0",
   "compiler": {
-    "manager": "truffle",
+    "manager": "openzeppelin",
     "compilerSettings": {
       "optimizer": {}
-    }
+    },
+    "solcVersion": "0.5.5"
   }
 }
