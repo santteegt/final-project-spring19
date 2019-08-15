@@ -137,7 +137,7 @@ export default class Stamps extends Component {
             return (
               <Card width={'380px'} mx={'auto'} my={5} p={0} className={stamp.owned ? styles.owned : styles.notowned}>
                 {!stamp.owned && balance == 0 && (
-                  <Button p={'1'} className={styles.claim}>
+                  <Button p={'1'} className={styles.claim} onClick={() => this.props.claimStamp(stamp, idx + 1)}>
                     Claim Stamp
                   </Button>
                 )}

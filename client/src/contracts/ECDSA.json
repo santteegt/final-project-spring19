@@ -2318,10 +2318,16 @@
       "links": {},
       "address": "0x65a6c99a23D1A599ED0Fb4446059691E69c7e569",
       "transactionHash": "0x381bac754ff0aa319a895ff9438cf1476da2678bc2cd2826d81468b3e9660e98"
+    },
+    "1565816938766": {
+      "events": {},
+      "links": {},
+      "address": "0x5C8Eaf188D3712D7A63b5E2508116f10B55fb6c0",
+      "transactionHash": "0x557979cbea19264f6b770420feb8a4c2e835324a5bbf3329f4a0573ef04e5232"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-08-14T05:28:20.995Z",
+  "updatedAt": "2019-08-14T21:09:36.002Z",
   "devdoc": {
     "details": "Based on https://gist.github.com/axic/5b33912c6f61ae6fd96d6c4a47afde6d TODO Remove this library once solidity supports passing a signature to ecrecover. See https://github.com/ethereum/solidity/issues/864",
     "methods": {},

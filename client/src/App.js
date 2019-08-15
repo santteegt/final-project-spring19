@@ -5,7 +5,7 @@ import {
   getWeb3,
   getGanacheWeb3,
   walletConnect,
-  getPortis,
+  // getPortis,
 } from './utils/getWeb3';
 import Web3Connect from 'web3connect';
 import Web3Info from './components/Web3Info/index.js';
@@ -28,6 +28,10 @@ class App extends Component {
     route: window.location.pathname.replace('/', ''),
   };
 
+  constructor(props) {
+    super(props);
+  }
+
   getGanacheAddresses = async () => {
     if (!this.ganacheProvider) {
       this.ganacheProvider = getGanacheWeb3();
@@ -41,23 +45,24 @@ class App extends Component {
   loginWalletConnect = async provider => {
     const web3 = await walletConnect(provider);
     if (provider.isPortis) {
-      console.log('provider', provider, provider._portis.showPortis);
+      provider._portis.onLogout(() => window.location.reload());
       this.setState({ portis: provider._portis, web3 }, this.updateConfig);
     } else {
       this.setState({ web3 }, this.updateConfig);
     }
   };
 
-  loginPortis = async () => {
-    const portis = await getPortis('rinkeby');
-    const web3 = await walletConnect(portis.provider);
-    console.log('PORTIS', portis, web3);
-    await portis.provider.enable();
-    web3.eth.getAccounts((error, accounts) => {
-      console.log('PORTIS accounts', accounts);
-    });
-    this.setState({ portis, web3 });
-  };
+  // DEPRECATED
+  // loginPortis = async () => {
+  //   const portis = await getPortis('rinkeby');
+  //   const web3 = await walletConnect(portis.provider);
+  //   console.log('PORTIS', portis, web3);
+  //   await portis.provider.enable();
+  //   web3.eth.getAccounts((error, accounts) => {
+  //     console.log('PORTIS accounts', accounts);
+  //   });
+  //   this.setState({ portis, web3 });
+  // };
 
   componentDidMount = async () => {};
 
@@ -172,6 +177,12 @@ class App extends Component {
     alert('Hope you enjoyed it! 🍻🍻');
   };
 
+  claimStamp = async (stamp, index) => {
+    const { accounts, contract } = this.state;
+    await contract.methods.airdropStamp(index).send({ from: accounts[0], gasLimit: 5000000 });
+    alert('You have successfully claimed a Stamp! 🚀🚀');
+  };
+
   renderLoader() {
     const loginButton = this.renderWeb3ConnectButton();
     return (
@@ -250,7 +261,13 @@ class App extends Component {
         {!web3 && walletConnectButton}
         {web3 && accounts && <Web3Info {...this.state} />}
         {web3 && accounts && (
-          <Stamps getStamps={this.getStamps} buyStamp={this.buyStamp} sellStamp={this.sellStamp} {...this.state} />
+          <Stamps
+            getStamps={this.getStamps}
+            buyStamp={this.buyStamp}
+            sellStamp={this.sellStamp}
+            claimStamp={this.claimStamp}
+            {...this.state}
+          />
         )}
       </div>
     );

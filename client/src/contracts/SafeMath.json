@@ -3216,10 +3216,16 @@
       "links": {},
       "address": "0xDdD9c60b7A733154958E33dF5591B4B00c6C0E67",
       "transactionHash": "0x3b87599ae60178e1996175a97e8e10e38d2cc708daebd1a155d34b3c98a409cf"
+    },
+    "1565816938766": {
+      "events": {},
+      "links": {},
+      "address": "0x928BD9f4216Fb9E79ecd8aAea784D809b6D1AEcE",
+      "transactionHash": "0xd0e5eabc48a55c0de62fb6c14696bd02cb1966578da6ddb0b0516afcf30bfaf6"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-08-14T05:28:21.003Z",
+  "updatedAt": "2019-08-14T21:09:35.998Z",
   "devdoc": {
     "details": "Unsigned math operations with safety checks that revert on error",
     "methods": {},

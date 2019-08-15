@@ -46,7 +46,7 @@ module.exports = {
         ),
       network_id: 4,
       gas: 6900000,
-      gasPrice: 1000000000
+      gasPrice: 1100000000
     },
     // main ethereum network(mainnet)
     main: {

@@ -1,4 +1,4 @@
-import Portis from '@portis/web3';
+// import Portis from '@portis/web3';
 import Web3 from 'web3';
 
 const FALLBACK_WEB3_PROVIDER = process.env.REACT_APP_NETWORK || 'http://0.0.0.0:8545';
@@ -8,6 +8,12 @@ const walletConnectProviderOpts = {
   portis: {
     id: PORTIS_APP_ID,
     network: 'rinkeby',
+    // network: 'ropsten',
+    // network: {
+    //   nodeUrl: 'http://localhost:8545',
+    //   chainId: 1565816938766,
+    //   gasRelayHubAddress: '0x9C57C0F1965D225951FE1B2618C92Eefd687654F',
+    // },
     config: {
       gasRelay: true,
     },
@@ -53,15 +59,15 @@ const walletConnect = provider =>
     }
   });
 
-const getPortis = network =>
-  new Promise((resolve, reject) => {
-    try {
-      const portis = new Portis(PORTIS_APP_ID, network);
-      resolve(portis);
-    } catch (error) {
-      reject(error);
-    }
-  });
+// const getPortis = network =>
+//   new Promise((resolve, reject) => {
+//     try {
+//       const portis = new Portis(PORTIS_APP_ID, network);
+//       resolve(portis);
+//     } catch (error) {
+//       reject(error);
+//     }
+//   });
 
 const getWeb3 = () =>
   new Promise((resolve, reject) => {
@@ -108,4 +114,5 @@ const getGanacheWeb3 = () => {
 };
 
 export default getWeb3;
-export { walletConnectProviderOpts, web3Networks, getGanacheWeb3, walletConnect, getPortis };
+// export { walletConnectProviderOpts, web3Networks, getGanacheWeb3, walletConnect, getPortis };
+export { walletConnectProviderOpts, web3Networks, getGanacheWeb3, walletConnect };
