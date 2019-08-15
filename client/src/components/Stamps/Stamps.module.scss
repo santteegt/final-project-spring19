@@ -1,3 +1,22 @@
 .stamps {
-    
+  .owned {
+    position: relative;
+  }
+
+  .owned::before {
+    position: absolute;
+    right: 50px;
+    top: 50px;
+    content: 'owned';
+    background-color: #0e0;
+    color: #fff;
+    padding: 5px 20px;
+    border-radius: 10px;
+  }
+
+  .claim {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
 }
