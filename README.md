@@ -1,16 +1,18 @@
-# Consensys Developer Program Spring 2019
+# Gitcoin Grow Ethereum Hackathon - Portis Bounty
 
-## Final Project: Nifties Exchange - A Blockchain game for promoting tourism and crypto onboarding
+## Project: Nifties Exchange - A Blockchain game for promoting tourism and crypto onboarding
 
-- **Author**: Santiago Gonzalez Toral ([Github](https://github.com/santteegt)|[email](mailto:hernangt12re3@gmail.com))
+### Authors
+- Santiago Gonzalez Toral ([Github](https://github.com/santteegt)|[email](mailto:hernangt12re3@gmail.com))
+- Oscar Malgiaritta ([Github](https://github.com/malgia)|[email](mailto:malgia@hotmail.com))
 
 ### What is this project about?
 
 Nifties Exchange is a dApp for incentivize the tourism on distant and not well-known attractions within big Cities, while at the same time being a useful tool for crypto onboard the masses. Its logic is basically a NFT exchange game with on-chain logic that simulates the market price of each tourism stamp artificially based on user demand and some sort of entropy found in past block hashes within the blockchain.
 
-#### User stories
+**In order to tackle the [Portis bounty](https://github.com/portis-project/gitcoin-grow-ethereum-hackathon/issues/1) *Use our Gas Relay to Redefine Blockchain User Experience*, we have integrated the Portis wallet and enable a decentralized relayer under the [GSN protocol](https://github.com/tabookey/tabookey-gasless), so users with no ETH on their accounts can be easily onboarded by enable them to claim stamps and sell them on the exchange with subsidized fees.**
 
-**Video Demo**: Part[ 1](https://youtu.be/WNILgIfUbe8)|[ 2](https://youtu.be/lM-U4I5F7gg)
+#### User stories
 
 ![User Stories](resources/banner.png)
 
@@ -21,6 +23,15 @@ Come and join the adventure to know new unknown places within big Cities around 
 - As a tourist, you may want to have a more fun experience during travelling that allows you to know awesome places. Through Nifties exchange, you can find a digital guide that recommends you to visit interesting places and get rewarded for it. You just need to collect or buy digital stamps through the dApp, playing with them using and exchange-based game, use them to get discounts on local attractions and get some profit at the end by selling them at the current market value.
 
 - As a blockchain community member, you may want to find more suitable ways to onboard crypto and decentralized applications to the masses. according to the latest [UNWTO World Tourism Barometer](http://marketintelligence.unwto.org/content/unwto-world-tourism-barometer), more than 1.4 billion of international tourist arrivals around the world have happened in 2018. Why not try to onboard that many people to blockchain? Nifties exchange allows you to do it within your locality.
+
+### User our dAPP on Rinkeby
+
+The dApp is live to be tested at [https://client.hernangt12re3.now.sh](https://client.hernangt12re3.now.sh)
+
+### Contracts
+
+* StampCollectible on Rinkeby [0x6446aea8e536Cb89f90668d29eBF30F926E9a24](https://rinkeby.etherscan.io/address/0x6446aea8e536cb89f90668d29ebf30f926e9a24d)
+* StampCollectible on Ropsten [0x83ee7C76056D2eAD1f672d6988Ffce98954df880](https://ropsten.etherscan.io/address/0x83ee7C76056D2eAD1f672d6988Ffce98954df880) **WARNING**: GSN features under Portis seems to not to be working fine
 
 ### How to Setup the project locally?
 
@@ -50,17 +61,23 @@ npm install -g @openzeppelin/cli
 
 ### Project setup
 
+**WARNING**: This project uses a version of web3connect that isn't released yet and that add support for the GSN in the Portis wallet. So before deploying the application, it is required to clone the forked repo and install it locally.
+
+To install web3connect
+
+```bash
+$ git clone https://github.com/santteegt/web3connect --branch portis-gasrelay
+$ cd web3connect
+$ npm run routine
+$ export $WEB3CONNECT_DIR
+```
+
 In order to setup the project to be run/deploy, you need to clone/download this repo and run the following commands within the project folder:
 
 ```bash
 $ npm install
 $ cd client && npm install
-```
-
-Install web3connect
-
-```bash
-git clone https://github.com/santteegt/web3connect/tree/portis-gasrelay --branch portis-gasrelay
+$ npm install $WEB3CONNECT_DIR
 ```
 
 If developing/running the dApp in your local computer, you need to deploy a local ganache in a separate terminal by running the following command:
@@ -121,14 +138,6 @@ $ cd client && npm start
 ```
 
 This will deploy the dApp locally on [http:localhost:3000](http:localhost:3000)
-
-### How to use the dApp on a public testnet?
-
-Currently, all smart contracts are deployed on the Ethereum `Rinkeby` testnet. You can find the corresponding addresses and Etherscan URLs pointing to the verified code in [deployed_addresses](deployed_addresses.md)
-
-In case you want to test the deployment to Rinkeby, make sure you fund your test account using the [Faucet server](https://faucet.rinkeby.io). Then, copy the mnemonic words of your Metamask account and paste them in a `.secret` file on the root directory of the project. Finally, you can run the following migration command:
-
-Smart contracts and unit tests were properly documented using the [natspec style guidelines for comments](https://solidity.readthedocs.io/en/v0.5.2/style-guide.html#natspec). A detailed explanation of each test suite is provided on each of the test source code files in the [test](test/) directory.
 
 ### Design Patterns Decisions
 
