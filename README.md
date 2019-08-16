@@ -61,23 +61,11 @@ npm install -g @openzeppelin/cli
 
 ### Project setup
 
-**WARNING**: This project uses a version of web3connect that isn't released yet and that add support for the GSN in the Portis wallet. So before deploying the application, it is required to clone the forked repo and install it locally.
-
-To install web3connect
-
-```bash
-$ git clone https://github.com/santteegt/web3connect --branch portis-gasrelay
-$ cd web3connect
-$ npm run routine
-$ export $WEB3CONNECT_DIR
-```
-
 In order to setup the project to be run/deploy, you need to clone/download this repo and run the following commands within the project folder:
 
 ```bash
 $ npm install
 $ cd client && npm install
-$ npm install $WEB3CONNECT_DIR
 ```
 
 If developing/running the dApp in your local computer, you need to deploy a local ganache in a separate terminal by running the following command:
